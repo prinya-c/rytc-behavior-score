@@ -12,6 +12,16 @@ function RotatedHeader({ children }) {
   )
 }
 
+/** จิตพิสัย column header: rendered as a fraction (numerator/denominator), each line rotated. */
+function RotatedFractionHeader({ numerator, denominator }) {
+  return (
+    <div className="h-[150px] flex items-end justify-center gap-1 pb-1">
+      <span className="rotated-header text-[9px] leading-none">{numerator}</span>
+      <span className="rotated-header text-[9px] leading-none">{denominator}</span>
+    </div>
+  )
+}
+
 const ROWS_PER_PAGE = 30
 
 function PrintPage({ rows, existing, courseCode, courseName, term, academicYear, klass }) {
@@ -25,6 +35,15 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
       </div>
 
       <table className="w-full border-collapse text-[8px] table-fixed">
+        <colgroup>
+          <col className="w-6" />
+          <col className="w-[150px]" />
+          {CRITERIA.map((c) => (
+            <col key={c.key} className="w-[26px]" />
+          ))}
+          <col className="w-[26px]" />
+          <col className="w-[52px]" />
+        </colgroup>
         <thead>
           <tr>
             <th
@@ -43,25 +62,31 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
             <th colSpan={CRITERIA.length} className="border border-black px-1 py-1 font-normal">
               รายการประเมิน
             </th>
-            <th rowSpan={2} className="border border-black p-0 align-bottom overflow-hidden w-6">
+            <th rowSpan={2} className="border border-black p-0 align-bottom overflow-hidden w-[26px]">
               <RotatedHeader>คะแนน</RotatedHeader>
             </th>
-            <th rowSpan={2} className="border border-black p-0 align-bottom overflow-hidden w-6">
-              <RotatedHeader>จิตพิสัย</RotatedHeader>
+            <th rowSpan={2} className="border border-black p-0 align-bottom overflow-hidden w-[52px]">
+              <RotatedFractionHeader
+                numerator="จิตพิสัย = คะแนนรวม x 10"
+                denominator="จำนวนรายงานที่ประเมิน"
+              />
             </th>
           </tr>
           <tr>
             {CRITERIA.map((c) => (
-              <th key={c.key} className="border border-black p-0 align-bottom overflow-hidden">
+              <th
+                key={c.key}
+                className="border border-black p-0 align-bottom overflow-hidden w-[26px]"
+              >
                 <RotatedHeader>{c.label}</RotatedHeader>
               </th>
             ))}
           </tr>
           <tr>
             <th className="border border-black px-1 py-0.5 w-6">ที่</th>
-            <th className="border border-black px-1 py-0.5 text-left w-28">ชื่อ - สกุล</th>
+            <th className="border border-black px-1 py-0.5 text-left w-[150px]">ชื่อ - สกุล</th>
             {CRITERIA.map((c) => (
-              <th key={c.key} className="border border-black px-1 py-0.5 font-normal">
+              <th key={c.key} className="border border-black px-1 py-0.5 font-normal w-[26px]">
                 {MAX_SCORE_PER_ITEM}
               </th>
             ))}

@@ -162,6 +162,7 @@ export default function Report() {
   const courseName = params.get('courseName') ?? ''
   const term = params.get('term') ?? ''
   const academicYear = params.get('academicYear') ?? ''
+  const autoPrint = params.get('autoPrint') === '1'
 
   const [klass, setKlass] = useState(null)
   const [existing, setExisting] = useState(new Map())
@@ -181,6 +182,12 @@ export default function Report() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [classId, academicYear, term])
+
+  useEffect(() => {
+    if (!autoPrint || loading || error || !klass) return
+    const timer = setTimeout(() => window.print(), 300)
+    return () => clearTimeout(timer)
+  }, [autoPrint, loading, error, klass])
 
   if (loading) return <div className="max-w-6xl mx-auto px-4 py-10 text-slate-500">กำลังโหลด...</div>
   if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-red-600">{error}</div>

@@ -90,6 +90,7 @@ export default function ScoreEntry() {
         classId,
         department: klass.depName,
         stdClass: klass.className,
+        classCode: klass.classCode,
         courseCode,
         courseName,
         term,

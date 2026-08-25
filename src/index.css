@@ -15,8 +15,26 @@ body {
   }
 
   @page {
-    size: A4 landscape;
-    margin: 8mm;
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  .print-page {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .print-page table {
+    break-inside: auto;
+  }
+
+  .print-page thead {
+    display: table-header-group;
   }
 }
 

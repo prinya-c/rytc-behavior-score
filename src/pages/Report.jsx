@@ -4,10 +4,120 @@ import { getClassDetail } from '../lib/outOf'
 import { loadScores } from '../lib/behaviorScore'
 import { CRITERIA, MAX_SCORE_PER_ITEM } from '../lib/criteria'
 
-function RotatedHeader({ children, heightClass = 'h-36' }) {
+function RotatedHeader({ children, heightClass = 'h-28' }) {
   return (
     <div className={`${heightClass} flex items-end justify-center pb-1`}>
       <span className="rotated-header text-[9px] leading-none">{children}</span>
+    </div>
+  )
+}
+
+const ROWS_PER_PAGE = 30
+
+function PrintPage({ rows, existing, courseCode, courseName, term, academicYear, klass }) {
+  return (
+    <div className="print-page">
+      <div className="text-center mb-2">
+        <p className="font-semibold text-sm">วิทยาลัยเทคนิคระยอง สถาบันการอาชีวศึกษาภาคตะวันออก</p>
+        <p className="font-semibold text-sm">
+          แบบสรุปผลการประเมินด้านคุณธรรม จริยธรรม ค่านิยมและคุณลักษณะอันพึงประสงค์(จิตพิสัย)
+        </p>
+      </div>
+
+      <div className="text-xs mb-2 leading-relaxed">
+        <p>รหัสวิชา {courseCode}</p>
+        <p>ชื่อวิชา {courseName}</p>
+        <p>
+          ภาคเรียนที่ {term} ปีการศึกษา {academicYear}
+        </p>
+        <p>แผนกวิชา {klass.depName}</p>
+        <p>อาจารย์ที่ปรึกษา {klass.advisorName || '-'}</p>
+      </div>
+
+      <table className="w-full border-collapse text-[8px] table-fixed">
+        <thead>
+          <tr>
+            <th className="border border-slate-500 px-1 py-1 w-6">ที่</th>
+            <th className="border border-slate-500 px-1 py-1 text-left w-28">ชื่อ - สกุล</th>
+            {CRITERIA.map((c) => (
+              <th key={c.key} className="border border-slate-500 p-0 align-bottom">
+                <RotatedHeader>{c.label}</RotatedHeader>
+              </th>
+            ))}
+            <th className="border border-slate-500 p-0 align-bottom w-6">
+              <RotatedHeader>คะแนน</RotatedHeader>
+            </th>
+            <th className="border border-slate-500 p-0 align-bottom w-6">
+              <RotatedHeader>จิตพิสัย = คะแนนรวม x 10/จำนวนรายการที่ประเมิน</RotatedHeader>
+            </th>
+          </tr>
+          <tr>
+            <th className="border border-slate-500 px-1 py-0.5"></th>
+            <th className="border border-slate-500 px-1 py-0.5"></th>
+            {CRITERIA.map((c) => (
+              <th key={c.key} className="border border-slate-500 px-1 py-0.5 font-normal">
+                {MAX_SCORE_PER_ITEM}
+              </th>
+            ))}
+            <th className="border border-slate-500 px-1 py-0.5 font-normal">
+              {MAX_SCORE_PER_ITEM * CRITERIA.length}
+            </th>
+            <th className="border border-slate-500 px-1 py-0.5 font-normal">
+              {MAX_SCORE_PER_ITEM * 10}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((student, i) => {
+            const record = student ? existing.get(student.key) : null
+            const scores = record?.scores ?? {}
+            return (
+              <tr key={student?.key ?? `blank-${i}`} style={{ height: '5.5mm' }}>
+                <td className="border border-slate-500 px-1 py-0.5 text-center">
+                  {student?.no ?? ''}
+                </td>
+                <td className="border border-slate-500 px-1 py-0.5 whitespace-nowrap overflow-hidden">
+                  {student?.fullName ?? ''}
+                </td>
+                {CRITERIA.map((c) => (
+                  <td key={c.key} className="border border-slate-500 px-1 py-0.5 text-center">
+                    {scores[c.key] ?? ''}
+                  </td>
+                ))}
+                <td className="border border-slate-500 px-1 py-0.5 text-center">
+                  {record?.totalScore ?? ''}
+                </td>
+                <td className="border border-slate-500 px-1 py-0.5 text-center">
+                  {record?.jitphisai ?? ''}
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+
+      <div className="flex justify-between items-start mt-4 text-xs">
+        <div className="space-y-0.5">
+          <p>ระดับ 2 หมายถึง ปฏิบัติเป็นประจำ</p>
+          <p>ระดับ 1 หมายถึง ปฏิบัติเป็นบางครั้ง</p>
+          <p>ระดับ 0 หมายถึง ไม่เคยปฏิบัติ</p>
+        </div>
+        <div className="flex gap-16 mt-4">
+          <div className="text-center">
+            <p>ลงชื่อ.....................................................</p>
+            <p className="mt-1">อาจารย์ประจำวิชา</p>
+          </div>
+          <div className="text-center">
+            <p>ลงชื่อ.....................................................</p>
+            <p className="mt-1">หัวหน้าแผนกวิชา</p>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-[9px] mt-4">
+        หมายเหตุ แบบสรุปผลการประเมินจิตพิสัยนี้ให้แนบมากับแบบบันทึกเวลาเรียนและประเมินผลการเรียนส่งงานวัดผล
+        ฯ เมื่อสิ้นภาคเรียน
+      </p>
     </div>
   )
 }
@@ -44,9 +154,16 @@ export default function Report() {
   if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-red-600">{error}</div>
   if (!klass) return null
 
+  const pageCount = Math.max(1, Math.ceil(klass.students.length / ROWS_PER_PAGE))
+  const printPages = Array.from({ length: pageCount }, (_, pageIndex) => {
+    const start = pageIndex * ROWS_PER_PAGE
+    const pageStudents = klass.students.slice(start, start + ROWS_PER_PAGE)
+    return Array.from({ length: ROWS_PER_PAGE }, (_, i) => pageStudents[i] ?? null)
+  })
+
   return (
     <div className="max-w-full px-4 py-8">
-      <div className="max-w-6xl mx-auto mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div className="no-print max-w-6xl mx-auto mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-xl font-semibold text-slate-800">
             แบบสรุปผลการประเมินด้านคุณธรรม จริยธรรม ค่านิยมและคุณลักษณะอันพึงประสงค์ (จิตพิสัย)
@@ -132,109 +249,20 @@ export default function Report() {
         ไม่เคยปฏิบัติ · จิตพิสัย = คะแนนรวม × 10 ÷ จำนวนรายการที่ประเมิน
       </p>
 
-      {/* Print view: laid out to match the college's official จิตพิสัย form */}
+      {/* Print view: paginated to match the college's official จิตพิสัย form, 30 rows/page */}
       <div className="hidden print:block text-black">
-        <div className="text-center mb-2">
-          <p className="font-semibold text-sm">วิทยาลัยเทคนิคระยอง สถาบันการอาชีวศึกษาภาคตะวันออก</p>
-          <p className="font-semibold text-sm">
-            แบบสรุปผลการประเมินด้านคุณธรรม จริยธรรม ค่านิยมและคุณลักษณะอันพึงประสงค์(จิตพิสัย)
-          </p>
-        </div>
-
-        <div className="text-xs mb-2 leading-relaxed">
-          <p>รหัสวิชา {courseCode}</p>
-          <p>ชื่อวิชา {courseName}</p>
-          <p>
-            ภาคเรียนที่ {term} ปีการศึกษา {academicYear}
-          </p>
-          <p>แผนกวิชา {klass.depName}</p>
-          <p>อาจารย์ที่ปรึกษา {klass.advisorName || '-'}</p>
-        </div>
-
-        <table className="w-full border-collapse text-[9px]">
-          <thead>
-            <tr>
-              <th className="border border-slate-500 px-1 py-1 w-8">ที่</th>
-              <th className="border border-slate-500 px-1 py-1 text-left min-w-[130px]">
-                ชื่อ - สกุล
-              </th>
-              {CRITERIA.map((c) => (
-                <th key={c.key} className="border border-slate-500 p-0 align-bottom">
-                  <RotatedHeader>{c.label}</RotatedHeader>
-                </th>
-              ))}
-              <th className="border border-slate-500 p-0 align-bottom w-8">
-                <RotatedHeader>คะแนน</RotatedHeader>
-              </th>
-              <th className="border border-slate-500 p-0 align-bottom w-8">
-                <RotatedHeader>จิตพิสัย = คะแนนรวม x 10/จำนวนรายการที่ประเมิน</RotatedHeader>
-              </th>
-            </tr>
-            <tr>
-              <th className="border border-slate-500 px-1 py-0.5"></th>
-              <th className="border border-slate-500 px-1 py-0.5"></th>
-              {CRITERIA.map((c) => (
-                <th key={c.key} className="border border-slate-500 px-1 py-0.5 font-normal">
-                  {MAX_SCORE_PER_ITEM}
-                </th>
-              ))}
-              <th className="border border-slate-500 px-1 py-0.5 font-normal">
-                {MAX_SCORE_PER_ITEM * CRITERIA.length}
-              </th>
-              <th className="border border-slate-500 px-1 py-0.5 font-normal">
-                {MAX_SCORE_PER_ITEM * 10}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {klass.students.map((student) => {
-              const record = existing.get(student.key)
-              const scores = record?.scores ?? {}
-              return (
-                <tr key={student.key}>
-                  <td className="border border-slate-500 px-1 py-0.5 text-center">{student.no}</td>
-                  <td className="border border-slate-500 px-1 py-0.5 whitespace-nowrap">
-                    {student.fullName}
-                  </td>
-                  {CRITERIA.map((c) => (
-                    <td key={c.key} className="border border-slate-500 px-1 py-0.5 text-center">
-                      {scores[c.key] ?? ''}
-                    </td>
-                  ))}
-                  <td className="border border-slate-500 px-1 py-0.5 text-center">
-                    {record?.totalScore ?? ''}
-                  </td>
-                  <td className="border border-slate-500 px-1 py-0.5 text-center">
-                    {record?.jitphisai ?? ''}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-
-        <div className="flex justify-between items-start mt-4 text-xs">
-          <div className="space-y-0.5">
-            <p>ระดับ 2 หมายถึง ปฏิบัติเป็นประจำ</p>
-            <p>ระดับ 1 หมายถึง ปฏิบัติเป็นบางครั้ง</p>
-            <p>ระดับ 0 หมายถึง ไม่เคยปฏิบัติ</p>
-          </div>
-          <div className="flex gap-16 mt-4">
-            <div className="text-center">
-              <p>ลงชื่อ.....................................................</p>
-              <p className="mt-1">อาจารย์ประจำวิชา</p>
-            </div>
-            <div className="text-center">
-              <p>ลงชื่อ.....................................................</p>
-              <p className="mt-1">หัวหน้าแผนกวิชา</p>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-[9px] mt-4">
-          หมายเหตุ แบบสรุปผลการประเมินจิตพิสัยนี้ให้แนบมากับแบบบันทึกเวลาเรียนและประเมินผลการเรียนส่งงานวัดผล
-          ฯ เมื่อสิ้นภาคเรียน
-        </p>
+        {printPages.map((rows, pageIndex) => (
+          <PrintPage
+            key={pageIndex}
+            rows={rows}
+            existing={existing}
+            courseCode={courseCode}
+            courseName={courseName}
+            term={term}
+            academicYear={academicYear}
+            klass={klass}
+          />
+        ))}
       </div>
     </div>
   )

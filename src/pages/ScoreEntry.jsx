@@ -22,7 +22,6 @@ export default function ScoreEntry() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
-  const [saveMessage, setSaveMessage] = useState('')
 
   useEffect(() => {
     Promise.all([getClassDetail(classId), loadScores({ classId, academicYear, term })])
@@ -83,7 +82,6 @@ export default function ScoreEntry() {
   async function handleSave() {
     if (!klass) return
     setSaving(true)
-    setSaveMessage('')
     setError('')
     try {
       await saveScores({
@@ -99,10 +97,9 @@ export default function ScoreEntry() {
         existing,
         evaluator: teacherProfile,
       })
-      setSaveMessage('บันทึกคะแนนเรียบร้อยแล้ว')
+      navigate('/')
     } catch (err) {
       setError(err.message)
-    } finally {
       setSaving(false)
     }
   }
@@ -131,12 +128,6 @@ export default function ScoreEntry() {
             กลับหน้าหลัก
           </Link>
           <button
-            onClick={() => navigate(`/report/${classId}?${params.toString()}`)}
-            className="no-print rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
-          >
-            ดูรายงาน
-          </button>
-          <button
             onClick={handleSave}
             disabled={saving}
             className="no-print rounded-lg bg-sky-600 text-white px-4 py-2 font-medium hover:bg-sky-700 disabled:opacity-50"
@@ -145,12 +136,6 @@ export default function ScoreEntry() {
           </button>
         </div>
       </div>
-
-      {saveMessage && (
-        <p className="max-w-6xl mx-auto mb-4 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2">
-          {saveMessage}
-        </p>
-      )}
 
       <p className="max-w-6xl mx-auto mb-3 text-xs text-slate-500">
         ระดับ 2 = ปฏิบัติเป็นประจำ, 1 = ปฏิบัติเป็นบางครั้ง, 0 = ไม่เคยปฏิบัติ, ว่าง = ไม่ประเมินรายการนี้ ·

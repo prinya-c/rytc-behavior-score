@@ -1,0 +1,127 @@
+import { useEffect, useState } from 'react'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { getOutOfClass } from '../lib/outOf'
+import { loadScores } from '../lib/behaviorScore'
+import { CRITERIA } from '../lib/criteria'
+
+export default function Report() {
+  const { classId } = useParams()
+  const [params] = useSearchParams()
+
+  const courseCode = params.get('courseCode') ?? ''
+  const courseName = params.get('courseName') ?? ''
+  const term = params.get('term') ?? ''
+  const academicYear = params.get('academicYear') ?? ''
+
+  const [klass, setKlass] = useState(null)
+  const [existing, setExisting] = useState(new Map())
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    Promise.all([getOutOfClass(classId), loadScores({ classId, academicYear, term })])
+      .then(([classData, existingMap]) => {
+        if (!classData) {
+          setError('ไม่พบกลุ่มเรียนนี้')
+          return
+        }
+        setKlass(classData)
+        setExisting(existingMap)
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
+  }, [classId, academicYear, term])
+
+  if (loading) return <div className="max-w-6xl mx-auto px-4 py-10 text-slate-500">กำลังโหลด...</div>
+  if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-red-600">{error}</div>
+  if (!klass) return null
+
+  return (
+    <div className="max-w-full px-4 py-8">
+      <div className="max-w-6xl mx-auto mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-800">
+            แบบสรุปผลการประเมินด้านคุณธรรม จริยธรรม ค่านิยมและคุณลักษณะอันพึงประสงค์ (จิตพิสัย)
+          </h1>
+          <p className="text-slate-500 mt-1 text-sm">
+            รหัสวิชา {courseCode} · {courseName} · ภาคเรียนที่ {term} ปีการศึกษา {academicYear} ·{' '}
+            {klass.department} {klass.stdClass}
+          </p>
+        </div>
+        <div className="flex gap-2 no-print">
+          <Link
+            to={`/score/${classId}?${params.toString()}`}
+            className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
+          >
+            แก้ไขคะแนน
+          </Link>
+          <button
+            onClick={() => window.print()}
+            className="rounded-lg bg-slate-800 text-white px-4 py-2 font-medium hover:bg-slate-900"
+          >
+            พิมพ์ / บันทึก PDF
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto border border-slate-200 rounded-2xl bg-white">
+        <table className="min-w-max border-collapse text-sm">
+          <thead>
+            <tr className="bg-slate-50">
+              <th className="border-b border-r border-slate-200 px-3 py-2 w-10">ที่</th>
+              <th className="border-b border-r border-slate-200 px-3 py-2 text-left min-w-[180px]">
+                ชื่อ-สกุล
+              </th>
+              {CRITERIA.map((c) => (
+                <th
+                  key={c.key}
+                  title={c.label}
+                  className="border-b border-r border-slate-200 px-2 py-2 min-w-[70px] font-normal text-slate-600"
+                >
+                  {c.short}
+                </th>
+              ))}
+              <th className="border-b border-slate-200 px-2 py-2 min-w-[70px]">รวม</th>
+              <th className="border-b border-slate-200 px-2 py-2 min-w-[80px]">จิตพิสัย</th>
+            </tr>
+          </thead>
+          <tbody>
+            {klass.students.map((student) => {
+              const record = existing.get(student.key)
+              const scores = record?.scores ?? {}
+              return (
+                <tr key={student.key} className="even:bg-slate-50/50">
+                  <td className="border-b border-r border-slate-200 px-3 py-1.5 text-center">
+                    {student.no}
+                  </td>
+                  <td className="border-b border-r border-slate-200 px-3 py-1.5 whitespace-nowrap">
+                    {student.fullName}
+                  </td>
+                  {CRITERIA.map((c) => (
+                    <td
+                      key={c.key}
+                      className="border-b border-r border-slate-200 px-2 py-1.5 text-center"
+                    >
+                      {scores[c.key] ?? '-'}
+                    </td>
+                  ))}
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-medium">
+                    {record?.totalScore ?? '-'}
+                  </td>
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-sky-700">
+                    {record?.jitphisai ?? '-'}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="max-w-6xl mx-auto mt-4 text-xs text-slate-500">
+        ระดับ 2 หมายถึง ปฏิบัติเป็นประจำ · ระดับ 1 หมายถึง ปฏิบัติเป็นบางครั้ง · ระดับ 0 หมายถึง
+        ไม่เคยปฏิบัติ · จิตพิสัย = คะแนนรวม × 10 ÷ จำนวนรายการที่ประเมิน
+      </p>
+    </div>
+  )
+}

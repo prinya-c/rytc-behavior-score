@@ -1,0 +1,201 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { listOutOfClasses } from '../lib/outOf'
+
+const currentBuddhistYear = new Date().getFullYear() + 543
+
+export default function Dashboard() {
+  const navigate = useNavigate()
+  const [classes, setClasses] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const [department, setDepartment] = useState('')
+  const [classId, setClassId] = useState('')
+  const [courseCode, setCourseCode] = useState('')
+  const [courseName, setCourseName] = useState('')
+  const [term, setTerm] = useState('1')
+  const [academicYear, setAcademicYear] = useState(String(currentBuddhistYear))
+
+  useEffect(() => {
+    listOutOfClasses()
+      .then((data) => {
+        setClasses(data)
+        if (data.length > 0) setDepartment(data[0].department)
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const departments = useMemo(
+    () => [...new Set(classes.map((c) => c.department).filter(Boolean))],
+    [classes],
+  )
+  const classesInDepartment = useMemo(
+    () => classes.filter((c) => c.department === department),
+    [classes, department],
+  )
+
+  useEffect(() => {
+    if (classesInDepartment.length > 0 && !classesInDepartment.some((c) => c.id === classId)) {
+      setClassId(classesInDepartment[0].id)
+    }
+  }, [classesInDepartment, classId])
+
+  const selectedClass = classes.find((c) => c.id === classId)
+
+  function buildParams() {
+    const params = new URLSearchParams({
+      courseCode: courseCode.trim(),
+      courseName: courseName.trim(),
+      term,
+      academicYear,
+    })
+    return params.toString()
+  }
+
+  function goToScoreEntry(e) {
+    e.preventDefault()
+    if (!classId) return
+    navigate(`/score/${classId}?${buildParams()}`)
+  }
+
+  function goToReport(e) {
+    e.preventDefault()
+    if (!classId) return
+    navigate(`/report/${classId}?${buildParams()}`)
+  }
+
+  if (loading) {
+    return <div className="max-w-3xl mx-auto px-4 py-10 text-slate-500">กำลังโหลดข้อมูล...</div>
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 text-red-600">
+        โหลดข้อมูลไม่สำเร็จ: {error}
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-2xl font-semibold text-slate-800 mb-1">เลือกวิชาและกลุ่มเรียน</h1>
+      <p className="text-slate-500 mb-6">
+        ข้อมูลกลุ่มเรียนและรายชื่อนักเรียนดึงมาจาก collection <code>out-of</code>
+      </p>
+
+      {classes.length === 0 ? (
+        <p className="text-slate-500">ยังไม่มีข้อมูลกลุ่มเรียนใน out-of</p>
+      ) : (
+        <form className="space-y-5 bg-white rounded-2xl border border-slate-200 p-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">สาขาวิชา</label>
+              <select
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              >
+                {departments.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                กลุ่มเรียน
+              </label>
+              <select
+                value={classId}
+                onChange={(e) => setClassId(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              >
+                {classesInDepartment.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.stdClass} ({c.students.length} คน)
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                รหัสวิชา
+              </label>
+              <input
+                value={courseCode}
+                onChange={(e) => setCourseCode(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                placeholder="เช่น 31901-2002"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                ชื่อวิชา
+              </label>
+              <input
+                value={courseName}
+                onChange={(e) => setCourseName(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                placeholder="เช่น ระบบปฏิบัติการเครื่องแม่ข่าย"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                ภาคเรียนที่
+              </label>
+              <select
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3 (ฤดูร้อน)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                ปีการศึกษา
+              </label>
+              <input
+                value={academicYear}
+                onChange={(e) => setAcademicYear(e.target.value.replace(/\D/g, ''))}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </div>
+          </div>
+
+          {selectedClass && (
+            <p className="text-sm text-slate-500">
+              พบนักเรียน {selectedClass.students.length} คน ในกลุ่มเรียน {selectedClass.stdClass}
+            </p>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={goToScoreEntry}
+              className="rounded-lg bg-sky-600 text-white px-4 py-2.5 font-medium hover:bg-sky-700"
+            >
+              กรอกคะแนนจิตพิสัย
+            </button>
+            <button
+              onClick={goToReport}
+              className="rounded-lg border border-slate-300 px-4 py-2.5 font-medium text-slate-700 hover:bg-slate-50"
+            >
+              ดูรายงานสรุป
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  )
+}

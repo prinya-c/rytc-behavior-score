@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// This app does NOT use Firebase Auth (by explicit product decision), so
+// there is no request.auth to check identity against. That means the rules
+// below CANNOT enforce "only the account owner can write their own score"
+// or "only registered teachers can write" — any client holding the public
+// Firebase config (which is unavoidably public for a web app) can write to
+// `behavior-score` and `teacher-accounts`. Passwords are hashed (see
+// src/lib/passwordHash.js) so a leaked account collection doesn't expose
+// plaintext passwords, but this is browser-side gating only, not database-
+// level access control. See README.md for the accepted-risk discussion.
+//
+// The one rule that IS meaningfully enforced here: `out-of` is read-only.
+// No client, including this app, may ever write to it.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /out-of/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /behavior-score/{docId} {
+      allow read, write: if true;
+    }
+
+    match /teacher-accounts/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

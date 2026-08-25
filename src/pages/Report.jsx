@@ -24,45 +24,42 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
         </p>
       </div>
 
-      <div className="text-xs mb-2 leading-relaxed">
-        <p>รหัสวิชา {courseCode}</p>
-        <p>ชื่อวิชา {courseName}</p>
-        <p>
-          ภาคเรียนที่ {term} ปีการศึกษา {academicYear}
-        </p>
-        <p>แผนกวิชา {klass.depName}</p>
-        <p>อาจารย์ที่ปรึกษา {klass.advisorName || '-'}</p>
-      </div>
-
       <table className="w-full border-collapse text-[8px] table-fixed">
         <thead>
           <tr>
-            <th rowSpan={2} className="border border-black px-1 py-1 w-6">
-              ที่
-            </th>
-            <th rowSpan={2} className="border border-black px-1 py-1 text-left w-28">
-              ชื่อ - สกุล
+            <th
+              colSpan={2}
+              rowSpan={2}
+              className="border border-black px-1.5 py-1 text-left align-top font-normal leading-relaxed"
+            >
+              <p>รหัสวิชา {courseCode}</p>
+              <p>ชื่อวิชา {courseName}</p>
+              <p>
+                ภาคเรียนที่ {term} ปีการศึกษา {academicYear}
+              </p>
+              <p>แผนกวิชา {klass.depName}</p>
+              <p>อาจารย์ที่ปรึกษา {klass.advisorName || '-'}</p>
             </th>
             <th colSpan={CRITERIA.length} className="border border-black px-1 py-1 font-normal">
               รายการประเมิน
             </th>
-            <th rowSpan={2} className="border border-black p-0 align-bottom w-6">
+            <th rowSpan={2} className="border border-black p-0 align-bottom overflow-hidden w-6">
               <RotatedHeader>คะแนน</RotatedHeader>
             </th>
-            <th rowSpan={2} className="border border-black p-0 align-bottom w-6">
+            <th rowSpan={2} className="border border-black p-0 align-bottom overflow-hidden w-6">
               <RotatedHeader>จิตพิสัย</RotatedHeader>
             </th>
           </tr>
           <tr>
             {CRITERIA.map((c) => (
-              <th key={c.key} className="border border-black p-0 align-bottom">
+              <th key={c.key} className="border border-black p-0 align-bottom overflow-hidden">
                 <RotatedHeader>{c.label}</RotatedHeader>
               </th>
             ))}
           </tr>
           <tr>
-            <th className="border border-black px-1 py-0.5"></th>
-            <th className="border border-black px-1 py-0.5"></th>
+            <th className="border border-black px-1 py-0.5 w-6">ที่</th>
+            <th className="border border-black px-1 py-0.5 text-left w-28">ชื่อ - สกุล</th>
             {CRITERIA.map((c) => (
               <th key={c.key} className="border border-black px-1 py-0.5 font-normal">
                 {MAX_SCORE_PER_ITEM}

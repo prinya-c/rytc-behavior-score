@@ -39,8 +39,7 @@ body {
 }
 
 .rotated-header {
-  display: inline-block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
   white-space: nowrap;
-  transform: rotate(-90deg);
-  transform-origin: left bottom;
 }

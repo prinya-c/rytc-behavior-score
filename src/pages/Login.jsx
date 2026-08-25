@@ -47,7 +47,7 @@ export default function Login() {
               required
               value={nationalId}
               onChange={(e) => setNationalId(e.target.value.replace(/\D/g, ''))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="13 หลัก"
             />
           </div>
@@ -58,16 +58,16 @@ export default function Login() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-danger">{error}</p>}
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-sky-600 text-white py-2.5 font-medium hover:bg-sky-700 disabled:opacity-50"
+            className="w-full rounded-lg bg-primary text-white py-2.5 font-medium hover:bg-primary-hover disabled:opacity-50"
           >
             {submitting ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
           </button>
@@ -75,7 +75,7 @@ export default function Login() {
 
         <p className="text-sm text-slate-500 text-center mt-6">
           ยังไม่มีบัญชี?{' '}
-          <Link to="/register" className="text-sky-600 font-medium hover:underline">
+          <Link to="/register" className="text-primary font-medium hover:underline">
             ลงทะเบียน
           </Link>
         </p>

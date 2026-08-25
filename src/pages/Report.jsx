@@ -190,7 +190,7 @@ export default function Report() {
   }, [autoPrint, loading, error, klass])
 
   if (loading) return <div className="max-w-6xl mx-auto px-4 py-10 text-slate-500">กำลังโหลด...</div>
-  if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-red-600">{error}</div>
+  if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-danger">{error}</div>
   if (!klass) return null
 
   const pageCount = Math.max(1, Math.ceil(klass.students.length / ROWS_PER_PAGE))
@@ -267,7 +267,7 @@ export default function Report() {
                   <td className="border-b border-slate-200 px-2 py-1.5 text-center font-medium">
                     {record?.totalScore ?? '-'}
                   </td>
-                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-sky-700">
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-secondary">
                     {record?.jitphisai ?? '-'}
                   </td>
                 </tr>

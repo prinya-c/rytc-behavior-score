@@ -129,7 +129,7 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-10 text-red-600">
+      <div className="max-w-3xl mx-auto px-4 py-10 text-danger">
         โหลดข้อมูลไม่สำเร็จ: {error}
       </div>
     )
@@ -145,7 +145,7 @@ export default function Dashboard() {
         <button
           onClick={() => setShowForm((v) => !v)}
           title="เพิ่มรายการใหม่"
-          className="shrink-0 w-11 h-11 rounded-full bg-sky-600 text-white text-2xl leading-none flex items-center justify-center hover:bg-sky-700 shadow-sm"
+          className="shrink-0 w-11 h-11 rounded-full bg-primary text-white text-2xl leading-none flex items-center justify-center hover:bg-primary-hover shadow-sm"
         >
           +
         </button>
@@ -282,7 +282,7 @@ export default function Dashboard() {
                         type="checkbox"
                         checked={selectedCriteria.includes(c.key)}
                         onChange={() => toggleCriterion(c.key)}
-                        className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+                        className="rounded border-slate-300 text-primary focus:ring-primary"
                       />
                       {c.label}
                     </label>
@@ -294,7 +294,7 @@ export default function Dashboard() {
                 <button
                   onClick={goToScoreEntry}
                   disabled={selectedCriteria.length === 0}
-                  className="rounded-lg bg-sky-600 text-white px-4 py-2.5 font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-lg bg-primary text-white px-4 py-2.5 font-medium hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   กรอกคะแนนจิตพิสัย
                 </button>
@@ -325,7 +325,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => viewSession(session)}
                     title="ดูรายละเอียด"
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-sky-50 text-sky-600 hover:bg-sky-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-info/10 text-info hover:bg-info/20"
                   >
                     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
@@ -339,7 +339,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => printSession(session)}
                     title="พิมพ์"
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-violet-50 text-violet-600 hover:bg-violet-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-secondary/10 text-secondary hover:bg-secondary/20"
                   >
                     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path
@@ -352,7 +352,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => editSession(session)}
                     title="แก้ไข"
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-amber-50 text-amber-600 hover:bg-amber-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-warning/10 text-warning hover:bg-warning/20"
                   >
                     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793z" />
@@ -362,7 +362,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => removeSession(session)}
                     title="ลบ"
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-danger/10 text-danger hover:bg-danger/20"
                   >
                     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path

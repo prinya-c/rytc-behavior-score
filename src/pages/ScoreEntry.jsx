@@ -117,7 +117,7 @@ export default function ScoreEntry() {
   }
 
   if (loading) return <div className="max-w-6xl mx-auto px-4 py-10 text-slate-500">กำลังโหลด...</div>
-  if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-red-600">{error}</div>
+  if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-danger">{error}</div>
   if (!klass) return null
 
   return (
@@ -142,7 +142,7 @@ export default function ScoreEntry() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="no-print rounded-lg bg-sky-600 text-white px-4 py-2 font-medium hover:bg-sky-700 disabled:opacity-50"
+            className="no-print rounded-lg bg-primary text-white px-4 py-2 font-medium hover:bg-primary-hover disabled:opacity-50"
           >
             {saving ? 'กำลังบันทึก...' : 'บันทึกคะแนน'}
           </button>
@@ -176,7 +176,7 @@ export default function ScoreEntry() {
                       value=""
                       onChange={(e) => fillColumn(c.key, e.target.value)}
                       title={`เติมค่าให้ทุกคนในคอลัมน์ "${c.label}"`}
-                      className="no-print w-14 rounded border border-slate-200 py-0.5 text-center bg-white text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="no-print w-14 rounded border border-slate-200 py-0.5 text-center bg-white text-xs focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="" disabled>
                         เติม
@@ -215,7 +215,7 @@ export default function ScoreEntry() {
                       <select
                         value={studentScores[c.key] ?? ''}
                         onChange={(e) => setScore(student.key, c.key, e.target.value)}
-                        className="w-14 rounded border border-slate-200 py-1 text-center bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-14 rounded border border-slate-200 py-1 text-center bg-white focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         <option value="">-</option>
                         <option value="0">0</option>
@@ -227,7 +227,7 @@ export default function ScoreEntry() {
                   <td className="border-b border-slate-200 px-2 py-1.5 text-center font-medium">
                     {totalScore}
                   </td>
-                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-sky-700">
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-secondary">
                     {jitphisai}
                   </td>
                 </tr>

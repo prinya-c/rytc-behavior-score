@@ -82,27 +82,27 @@ export default function Register() {
               required
               value={nationalId}
               onChange={(e) => setNationalId(e.target.value.replace(/\D/g, ''))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="13 หลัก"
             />
             {lookupState === 'loading' && (
               <p className="text-xs text-slate-400 mt-1">กำลังค้นหาข้อมูล...</p>
             )}
             {lookupState === 'found' && teacher && (
-              <div className="mt-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 space-y-0.5">
-                <p className="text-sm text-emerald-800">
-                  <span className="text-emerald-600">ชื่อ-สกุล:</span> {teacher.fullName}
+              <div className="mt-2 rounded-lg bg-success/10 border border-success/30 px-3 py-2 space-y-0.5">
+                <p className="text-sm text-success">
+                  <span className="text-slate-500">ชื่อ-สกุล:</span> {teacher.fullName}
                 </p>
-                <p className="text-sm text-emerald-800">
-                  <span className="text-emerald-600">ตำแหน่ง:</span> {teacher.position || '-'}
+                <p className="text-sm text-success">
+                  <span className="text-slate-500">ตำแหน่ง:</span> {teacher.position || '-'}
                 </p>
-                <p className="text-sm text-emerald-800">
-                  <span className="text-emerald-600">สาขาวิชา:</span> {teacher.depName || '-'}
+                <p className="text-sm text-success">
+                  <span className="text-slate-500">สาขาวิชา:</span> {teacher.depName || '-'}
                 </p>
               </div>
             )}
             {lookupState === 'not-found' && (
-              <p className="text-sm text-red-600 mt-1">
+              <p className="text-sm text-danger mt-1">
                 ไม่พบข้อมูลอาจารย์ตามเลขบัตรนี้ กรุณาติดต่อผู้ดูแลระบบ
               </p>
             )}
@@ -115,7 +115,7 @@ export default function Register() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="อย่างน้อย 6 ตัวอักษร"
             />
           </div>
@@ -129,16 +129,16 @@ export default function Register() {
               minLength={6}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-danger">{error}</p>}
 
           <button
             type="submit"
             disabled={submitting || lookupState !== 'found'}
-            className="w-full rounded-lg bg-sky-600 text-white py-2.5 font-medium hover:bg-sky-700 disabled:opacity-50"
+            className="w-full rounded-lg bg-primary text-white py-2.5 font-medium hover:bg-primary-hover disabled:opacity-50"
           >
             {submitting ? 'กำลังลงทะเบียน...' : 'ลงทะเบียน'}
           </button>
@@ -146,7 +146,7 @@ export default function Register() {
 
         <p className="text-sm text-slate-500 text-center mt-6">
           มีบัญชีอยู่แล้ว?{' '}
-          <Link to="/login" className="text-sky-600 font-medium hover:underline">
+          <Link to="/login" className="text-primary font-medium hover:underline">
             เข้าสู่ระบบ
           </Link>
         </p>

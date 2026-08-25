@@ -7,7 +7,7 @@ export default function Navbar() {
   return (
     <header className="no-print bg-white border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link to="/" className="font-semibold text-slate-800">
+        <Link to="/" className="font-semibold text-primary">
           ระบบประเมินคุณลักษณะอันพึงประสงค์
         </Link>
         {teacherProfile && (

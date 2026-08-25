@@ -4,9 +4,9 @@ import { getClassDetail } from '../lib/outOf'
 import { loadScores } from '../lib/behaviorScore'
 import { CRITERIA, MAX_SCORE_PER_ITEM } from '../lib/criteria'
 
-function RotatedHeader({ children, heightClass = 'h-28' }) {
+function RotatedHeader({ children }) {
   return (
-    <div className={`${heightClass} flex items-end justify-center pb-1`}>
+    <div className="h-[150px] flex items-end justify-center pb-1">
       <span className="rotated-header text-[9px] leading-none">{children}</span>
     </div>
   )
@@ -37,32 +37,41 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
       <table className="w-full border-collapse text-[8px] table-fixed">
         <thead>
           <tr>
-            <th className="border border-slate-500 px-1 py-1 w-6">ที่</th>
-            <th className="border border-slate-500 px-1 py-1 text-left w-28">ชื่อ - สกุล</th>
-            {CRITERIA.map((c) => (
-              <th key={c.key} className="border border-slate-500 p-0 align-bottom">
-                <RotatedHeader>{c.label}</RotatedHeader>
-              </th>
-            ))}
-            <th className="border border-slate-500 p-0 align-bottom w-6">
+            <th rowSpan={2} className="border border-black px-1 py-1 w-6">
+              ที่
+            </th>
+            <th rowSpan={2} className="border border-black px-1 py-1 text-left w-28">
+              ชื่อ - สกุล
+            </th>
+            <th colSpan={CRITERIA.length} className="border border-black px-1 py-1 font-normal">
+              รายการประเมิน
+            </th>
+            <th rowSpan={2} className="border border-black p-0 align-bottom w-6">
               <RotatedHeader>คะแนน</RotatedHeader>
             </th>
-            <th className="border border-slate-500 p-0 align-bottom w-6">
-              <RotatedHeader>จิตพิสัย = คะแนนรวม x 10/จำนวนรายการที่ประเมิน</RotatedHeader>
+            <th rowSpan={2} className="border border-black p-0 align-bottom w-6">
+              <RotatedHeader>จิตพิสัย</RotatedHeader>
             </th>
           </tr>
           <tr>
-            <th className="border border-slate-500 px-1 py-0.5"></th>
-            <th className="border border-slate-500 px-1 py-0.5"></th>
             {CRITERIA.map((c) => (
-              <th key={c.key} className="border border-slate-500 px-1 py-0.5 font-normal">
+              <th key={c.key} className="border border-black p-0 align-bottom">
+                <RotatedHeader>{c.label}</RotatedHeader>
+              </th>
+            ))}
+          </tr>
+          <tr>
+            <th className="border border-black px-1 py-0.5"></th>
+            <th className="border border-black px-1 py-0.5"></th>
+            {CRITERIA.map((c) => (
+              <th key={c.key} className="border border-black px-1 py-0.5 font-normal">
                 {MAX_SCORE_PER_ITEM}
               </th>
             ))}
-            <th className="border border-slate-500 px-1 py-0.5 font-normal">
+            <th className="border border-black px-1 py-0.5 font-normal">
               {MAX_SCORE_PER_ITEM * CRITERIA.length}
             </th>
-            <th className="border border-slate-500 px-1 py-0.5 font-normal">
+            <th className="border border-black px-1 py-0.5 font-normal">
               {MAX_SCORE_PER_ITEM * 10}
             </th>
           </tr>
@@ -73,21 +82,21 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
             const scores = record?.scores ?? {}
             return (
               <tr key={student?.key ?? `blank-${i}`} style={{ height: '5.5mm' }}>
-                <td className="border border-slate-500 px-1 py-0.5 text-center">
+                <td className="border border-black px-1 py-0.5 text-center">
                   {student?.no ?? ''}
                 </td>
-                <td className="border border-slate-500 px-1 py-0.5 whitespace-nowrap overflow-hidden">
+                <td className="border border-black px-1 py-0.5 whitespace-nowrap overflow-hidden">
                   {student?.fullName ?? ''}
                 </td>
                 {CRITERIA.map((c) => (
-                  <td key={c.key} className="border border-slate-500 px-1 py-0.5 text-center">
+                  <td key={c.key} className="border border-black px-1 py-0.5 text-center">
                     {scores[c.key] ?? ''}
                   </td>
                 ))}
-                <td className="border border-slate-500 px-1 py-0.5 text-center">
+                <td className="border border-black px-1 py-0.5 text-center">
                   {record?.totalScore ?? ''}
                 </td>
-                <td className="border border-slate-500 px-1 py-0.5 text-center">
+                <td className="border border-black px-1 py-0.5 text-center">
                   {record?.jitphisai ?? ''}
                 </td>
               </tr>
@@ -101,6 +110,7 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
           <p>ระดับ 2 หมายถึง ปฏิบัติเป็นประจำ</p>
           <p>ระดับ 1 หมายถึง ปฏิบัติเป็นบางครั้ง</p>
           <p>ระดับ 0 หมายถึง ไม่เคยปฏิบัติ</p>
+          <p className="mt-1">คะแนนจิตพิสัย = คะแนนรวม x 10/จำนวนรายการที่ประเมิน</p>
         </div>
         <div className="flex gap-16 mt-4">
           <div className="text-center">

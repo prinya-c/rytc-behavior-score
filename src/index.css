@@ -42,4 +42,5 @@ body {
   display: inline-block;
   white-space: nowrap;
   transform: rotate(-90deg);
+  transform-origin: left bottom;
 }

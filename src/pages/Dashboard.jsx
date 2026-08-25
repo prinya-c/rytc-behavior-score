@@ -289,7 +289,7 @@ export default function Dashboard() {
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="font-medium text-slate-800">
-                  {session.classCode} - {session.stdClass}
+                  {session.classId} - {session.stdClass}
                 </p>
                 <div className="flex gap-1 shrink-0">
                   <button

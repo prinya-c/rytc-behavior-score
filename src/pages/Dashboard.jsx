@@ -69,12 +69,6 @@ export default function Dashboard() {
     navigate(`/score/${classId}?${buildParams()}`)
   }
 
-  function goToReport(e) {
-    e.preventDefault()
-    if (!classId) return
-    navigate(`/report/${classId}?${buildParams()}`)
-  }
-
   function buildSessionParams(session, overrides = {}) {
     return new URLSearchParams({
       courseCode: session.courseCode ?? '',
@@ -269,12 +263,6 @@ export default function Dashboard() {
                   className="rounded-lg bg-sky-600 text-white px-4 py-2.5 font-medium hover:bg-sky-700"
                 >
                   กรอกคะแนนจิตพิสัย
-                </button>
-                <button
-                  onClick={goToReport}
-                  className="rounded-lg border border-slate-300 px-4 py-2.5 font-medium text-slate-700 hover:bg-slate-50"
-                >
-                  ดูรายงานสรุป
                 </button>
               </div>
             </>

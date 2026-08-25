@@ -295,30 +295,52 @@ export default function Dashboard() {
                   <button
                     onClick={() => viewSession(session)}
                     title="ดูรายละเอียด"
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-sky-50 text-sky-600 hover:bg-sky-100"
                   >
-                    👁
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    </svg>
                   </button>
                   <button
                     onClick={() => printSession(session)}
                     title="พิมพ์"
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-violet-50 text-violet-600 hover:bg-violet-100"
                   >
-                    🖨
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.752.097 1.126.153A2.212 2.212 0 0118 8.653v4.097A2.25 2.25 0 0115.75 15h-.241l.305 1.984A1.75 1.75 0 0114.084 19H5.915a1.75 1.75 0 01-1.73-2.016L4.492 15H4.25A2.25 2.25 0 012 12.75V8.653c0-1.082.775-2.034 1.874-2.198.374-.056.75-.107 1.127-.153V2.75zm8.5 3.397a41.533 41.533 0 00-7 0V2.75a.25.25 0 01.25-.25h6.5a.25.25 0 01.25.25v3.397zM6 15l-.317 2.066a.25.25 0 00.247.284h8.14a.25.25 0 00.247-.284L14 15H6zm-.5-6.75a.75.75 0 10-1.5 0 .75.75 0 001.5 0z"
+                      />
+                    </svg>
                   </button>
                   <button
                     onClick={() => editSession(session)}
                     title="แก้ไข"
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-amber-50 text-amber-600 hover:bg-amber-100"
                   >
-                    ✎
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793z" />
+                      <path d="M11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.829-2.828z" />
+                    </svg>
                   </button>
                   <button
                     onClick={() => removeSession(session)}
                     title="ลบ"
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50"
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-100"
                   >
-                    🗑
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.808a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482 41.03 41.03 0 00-2.365-.298V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>

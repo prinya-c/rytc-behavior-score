@@ -144,7 +144,14 @@ export default function Dashboard() {
       </div>
 
       {showForm && (
-        <form className="space-y-5 bg-white rounded-2xl border border-slate-200 p-6 mb-8">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+          onClick={() => setShowForm(false)}
+        >
+          <form
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-xl"
+          >
           <div className="flex items-center justify-between">
             <h2 className="font-medium text-slate-800">เลือกวิชาและกลุ่มเรียน</h2>
             <button
@@ -272,7 +279,8 @@ export default function Dashboard() {
               </div>
             </>
           )}
-        </form>
+          </form>
+        </div>
       )}
 
       {sessions.length === 0 ? (

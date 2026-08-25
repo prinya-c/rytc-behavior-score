@@ -13,4 +13,15 @@ body {
   .no-print {
     display: none !important;
   }
+
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+}
+
+.rotated-header {
+  display: inline-block;
+  white-space: nowrap;
+  transform: rotate(-90deg);
 }

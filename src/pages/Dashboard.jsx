@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { listStdClasses } from '../lib/outOf'
+import { listDepartments, listStdClasses } from '../lib/outOf'
 
 const currentBuddhistYear = new Date().getFullYear() + 543
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const [departments, setDepartments] = useState([])
   const [stdClasses, setStdClasses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,22 +19,15 @@ export default function Dashboard() {
   const [academicYear, setAcademicYear] = useState(String(currentBuddhistYear))
 
   useEffect(() => {
-    listStdClasses()
-      .then((data) => {
-        setStdClasses(data)
-        if (data.length > 0) setDepId(data[0].depId)
+    Promise.all([listDepartments(), listStdClasses()])
+      .then(([deptData, classData]) => {
+        setDepartments(deptData)
+        setStdClasses(classData)
+        if (deptData.length > 0) setDepId(deptData[0].depId)
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [])
-
-  const departments = useMemo(() => {
-    const map = new Map()
-    for (const c of stdClasses) {
-      if (c.depId && !map.has(c.depId)) map.set(c.depId, c.depName)
-    }
-    return [...map.entries()].map(([id, name]) => ({ depId: id, depName: name }))
-  }, [stdClasses])
 
   const classesInDepartment = useMemo(
     () => stdClasses.filter((c) => c.depId === depId),

@@ -5,6 +5,11 @@ import { outOfDb } from './firebase'
 // the school's existing data as root collections: department, std_class,
 // students, teachers. This app only ever reads from it — never writes.
 
+function depIdFromClassCode(classCode) {
+  const code = String(classCode ?? '')
+  return /^\d{9}$/.test(code) ? code.slice(3, 7) : ''
+}
+
 let listCache = null // { departments, stdClasses } — small, rarely-changing, session-cached
 
 async function loadLists() {
@@ -22,12 +27,17 @@ async function loadLists() {
 
   const stdClasses = classSnap.docs.map((d) => {
     const data = d.data()
+    const classCode = data.class_code ?? d.id
     return {
       id: d.id,
-      classCode: data.class_code ?? d.id,
+      classCode,
       className: data.class_name ?? '',
       shortName: data.short_name ?? '',
-      depId: data.dep_id ?? '',
+      // class_code is always 9 digits with the 4-digit dep_id embedded at
+      // positions 4-7 (e.g. 692190101 -> "1901"). The std_class.dep_id
+      // field itself isn't always reliable, so grouping by department uses
+      // this derived value instead.
+      depId: depIdFromClassCode(classCode),
       depName: data.dep_name ?? '',
       advisorName: data.advisor_name ?? '',
     }

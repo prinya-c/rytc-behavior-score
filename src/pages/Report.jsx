@@ -223,7 +223,7 @@ export default function Report() {
       </div>
 
       {/* On-screen view: compact, horizontally scrollable */}
-      <div className="print:hidden overflow-x-auto border border-slate-200 rounded-2xl bg-white">
+      <div className="print:hidden max-w-6xl mx-auto overflow-x-auto border border-slate-200 rounded-2xl bg-white">
         <table className="min-w-max border-collapse text-sm">
           <thead>
             <tr className="bg-primary/10">

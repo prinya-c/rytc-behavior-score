@@ -161,7 +161,7 @@ export default function ScoreEntry() {
         เลือกค่าที่หัวคอลัมน์เพื่อเติมทั้งคอลัมน์ในครั้งเดียว
       </p>
 
-      <div className="overflow-x-auto border border-slate-200 rounded-2xl bg-white">
+      <div className="max-w-6xl mx-auto overflow-x-auto border border-slate-200 rounded-2xl bg-white">
         <table className="min-w-max border-collapse text-sm">
           <thead>
             <tr className="bg-primary/10">

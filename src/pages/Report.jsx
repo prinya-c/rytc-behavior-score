@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { getOutOfClass } from '../lib/outOf'
+import { getClassDetail } from '../lib/outOf'
 import { loadScores } from '../lib/behaviorScore'
 import { CRITERIA } from '../lib/criteria'
 
@@ -19,7 +19,7 @@ export default function Report() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    Promise.all([getOutOfClass(classId), loadScores({ classId, academicYear, term })])
+    Promise.all([getClassDetail(classId), loadScores({ classId, academicYear, term })])
       .then(([classData, existingMap]) => {
         if (!classData) {
           setError('ไม่พบกลุ่มเรียนนี้')
@@ -45,7 +45,7 @@ export default function Report() {
           </h1>
           <p className="text-slate-500 mt-1 text-sm">
             รหัสวิชา {courseCode} · {courseName} · ภาคเรียนที่ {term} ปีการศึกษา {academicYear} ·{' '}
-            {klass.department} {klass.stdClass}
+            {klass.depName} {klass.className}
           </p>
         </div>
         <div className="flex gap-2 no-print">

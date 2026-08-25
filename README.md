@@ -17,20 +17,37 @@
 
 ### `out-of` (อ่านอย่างเดียว, มีอยู่แล้วในระบบ)
 
-หนึ่งเอกสาร = หนึ่งกลุ่มเรียน:
+`out-of` เป็นเอกสารเดียวที่มี subcollections อยู่ภายใน (ไม่ทราบ document ID ของเอกสารแม่
+แอปจึงอ่านผ่าน Firestore `collectionGroup()` แทน ซึ่งค้นหา subcollection จากชื่อได้โดยไม่ต้องรู้
+ID เอกสารแม่ — ดู `src/lib/outOf.js`):
 
 ```
-out-of/{docId}
-  department: string   // สาขาวิชา
-  std_class:  string   // กลุ่มเรียน
-  students:   {...}    // ข้อมูลนักเรียน
-  teachers:   {...}    // ข้อมูลครู
+out-of/{docId}/department/{depDocId}
+  dep_id:   string   // รหัสสาขาวิชา
+  dep_name: string   // ชื่อสาขาวิชา
+
+out-of/{docId}/std_class/{classDocId}
+  class_code:   number  // รหัสกลุ่มเรียน (ใช้ผูกกับ students.class_code)
+  class_name:   string  // ชื่อกลุ่มเรียนเต็ม เช่น "ช่างยนต์ 3/1"
+  short_name:   string  // ชื่อย่อ เช่น "ชย.3/1"
+  dep_id:       string
+  dep_name:     string
+  advisor_name: string  // อาจารย์ที่ปรึกษา
+
+out-of/{docId}/students/{studentDocId}
+  sid:        string  // รหัสนักเรียน
+  sname:      string  // ชื่อ-สกุล
+  sidcard:    string  // เลขบัตรประชาชนนักเรียน
+  class_code: number  // ผูกกับ std_class.class_code
+  class_name, dep_id, dep_name, short_name: string  // denormalized สำหรับอ้างอิง
+
+out-of/{docId}/teachers/{teacherDocId}   // รายชื่อบุคลากรทั้งวิทยาลัย ไม่ได้ใช้ในแอปนี้
+  tidcard, tname, dep_id, dep_name, position: string
 ```
 
-> โครงสร้างฟิลด์ *ภายใน* `students`/`teachers` (เช่นชื่อ, รหัสนักเรียน) ยังไม่ได้รับการยืนยัน
-> ตอนพัฒนา แอปจึงอ่านแบบยืดหยุ่นใน `src/lib/outOf.js` โดยลองหลายชื่อฟิลด์ที่พบได้ทั่วไป
-> (เช่น `fullName`/`name`/`ชื่อ-สกุล`, `studentId`/`id`/`รหัสนักเรียน` ฯลฯ) ถ้าข้อมูลจริงใช้ชื่อฟิลด์
-> อื่น ให้เพิ่มชื่อนั้นในลิสต์ที่ต้นไฟล์ `src/lib/outOf.js`
+> แอปนี้ **อ่านอย่างเดียว** ไม่มีการเขียนกลับไปที่ `out-of` เด็ดขาด (บังคับเพิ่มด้วย
+> `firestore.rules`: `allow write: if false`) การอ่านทั้งหมดใน `src/lib/outOf.js` ไม่มี
+> `where`/`orderBy` จึงไม่ต้องสร้าง collection-group index เพิ่มใน Firebase Console
 
 ### `teacher-accounts` (สร้างใหม่โดยแอปนี้)
 

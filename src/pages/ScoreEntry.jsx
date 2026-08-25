@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { getOutOfClass } from '../lib/outOf'
+import { getClassDetail } from '../lib/outOf'
 import { loadScores, saveScores } from '../lib/behaviorScore'
 import { CRITERIA, computeJitphisai } from '../lib/criteria'
 import { useAuth } from '../context/AuthContext'
@@ -25,7 +25,7 @@ export default function ScoreEntry() {
   const [saveMessage, setSaveMessage] = useState('')
 
   useEffect(() => {
-    Promise.all([getOutOfClass(classId), loadScores({ classId, academicYear, term })])
+    Promise.all([getClassDetail(classId), loadScores({ classId, academicYear, term })])
       .then(([classData, existingMap]) => {
         if (!classData) {
           setError('ไม่พบกลุ่มเรียนนี้')
@@ -71,8 +71,8 @@ export default function ScoreEntry() {
     try {
       await saveScores({
         classId,
-        department: klass.department,
-        stdClass: klass.stdClass,
+        department: klass.depName,
+        stdClass: klass.className,
         courseCode,
         courseName,
         term,
@@ -102,8 +102,8 @@ export default function ScoreEntry() {
             แบบประเมินคุณลักษณะอันพึงประสงค์ (จิตพิสัย)
           </h1>
           <p className="text-slate-500 mt-1">
-            {courseCode} {courseName} · ภาคเรียนที่ {term}/{academicYear} · {klass.department}{' '}
-            {klass.stdClass}
+            {courseCode} {courseName} · ภาคเรียนที่ {term}/{academicYear} · {klass.depName}{' '}
+            {klass.className}
           </p>
         </div>
         <div className="flex gap-2">

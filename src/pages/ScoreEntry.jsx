@@ -61,6 +61,23 @@ export default function ScoreEntry() {
     setScoresByStudentKey(filled)
   }
 
+  function fillColumn(criteriaKey, rawValue) {
+    if (!klass) return
+    setScoresByStudentKey((prev) => {
+      const next = { ...prev }
+      for (const student of klass.students) {
+        const studentScores = { ...(next[student.key] ?? {}) }
+        if (rawValue === '') {
+          delete studentScores[criteriaKey]
+        } else {
+          studentScores[criteriaKey] = Number(rawValue)
+        }
+        next[student.key] = studentScores
+      }
+      return next
+    })
+  }
+
   function setScore(studentKey, criteriaKey, rawValue) {
     setScoresByStudentKey((prev) => {
       const studentScores = { ...(prev[studentKey] ?? {}) }
@@ -154,7 +171,8 @@ export default function ScoreEntry() {
       )}
 
       <p className="max-w-6xl mx-auto mb-3 text-xs text-slate-500">
-        ระดับ 2 = ปฏิบัติเป็นประจำ, 1 = ปฏิบัติเป็นบางครั้ง, 0 = ไม่เคยปฏิบัติ, ว่าง = ไม่ประเมินรายการนี้
+        ระดับ 2 = ปฏิบัติเป็นประจำ, 1 = ปฏิบัติเป็นบางครั้ง, 0 = ไม่เคยปฏิบัติ, ว่าง = ไม่ประเมินรายการนี้ ·
+        เลือกค่าที่หัวคอลัมน์เพื่อเติมทั้งคอลัมน์ในครั้งเดียว
       </p>
 
       <div className="overflow-x-auto border border-slate-200 rounded-2xl bg-white">
@@ -173,7 +191,23 @@ export default function ScoreEntry() {
                   title={c.label}
                   className="border-b border-r border-slate-200 px-2 py-2 text-center align-bottom min-w-[70px] font-normal text-slate-600"
                 >
-                  {c.short}
+                  <div className="space-y-1">
+                    <div>{c.short}</div>
+                    <select
+                      value=""
+                      onChange={(e) => fillColumn(c.key, e.target.value)}
+                      title={`เติมค่าให้ทุกคนในคอลัมน์ "${c.label}"`}
+                      className="no-print w-14 rounded border border-slate-200 py-0.5 text-center bg-white text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    >
+                      <option value="" disabled>
+                        เติม
+                      </option>
+                      <option value="2">2</option>
+                      <option value="1">1</option>
+                      <option value="0">0</option>
+                      <option value="">-</option>
+                    </select>
+                  </div>
                 </th>
               ))}
               <th className="border-b border-slate-200 px-2 py-2 text-center min-w-[70px]">รวม</th>

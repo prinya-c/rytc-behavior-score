@@ -10,7 +10,7 @@ import {
 import { db } from './firebase'
 import { computeJitphisai } from './criteria'
 
-export const BEHAVIOR_SCORE_COLLECTION = 'behavior-score'
+export const SCORE_COLLECTION = 'student-scores'
 
 function safeIdPart(value) {
   return String(value ?? '').replace(/[/\s]+/g, '-')
@@ -25,7 +25,7 @@ export function buildScoreDocId({ classId, studentKey, academicYear, term }) {
 /** Returns a Map keyed by studentKey with the previously saved doc (or undefined). */
 export async function loadScores({ classId, academicYear, term }) {
   const q = query(
-    collection(db, BEHAVIOR_SCORE_COLLECTION),
+    collection(db, SCORE_COLLECTION),
     where('classId', '==', classId),
     where('academicYear', '==', academicYear),
     where('term', '==', term),
@@ -63,7 +63,7 @@ export async function saveScores({
     const prior = existing.get(student.key)
 
     batch.set(
-      doc(db, BEHAVIOR_SCORE_COLLECTION, docId),
+      doc(db, SCORE_COLLECTION, docId),
       {
         classId,
         department,

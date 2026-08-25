@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
+import { findTeacherByNationalId } from '../lib/outOf'
 import { hashPassword, verifyPassword } from '../lib/passwordHash'
 
 const TEACHERS_COLLECTION = 'teacher-accounts'
@@ -30,13 +31,10 @@ export function AuthProvider({ children }) {
     }
   }, [teacherProfile])
 
-  async function register({ nationalId, fullName, password }) {
+  async function register({ nationalId, password }) {
     const id = nationalId.trim()
     if (!NATIONAL_ID_RE.test(id)) {
       throw new Error('เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก')
-    }
-    if (!fullName.trim()) {
-      throw new Error('กรุณากรอกชื่อ-สกุล')
     }
     if (password.length < 6) {
       throw new Error('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร')
@@ -50,20 +48,33 @@ export function AuthProvider({ children }) {
         throw new Error('เลขบัตรประชาชนนี้ลงทะเบียนไว้แล้ว กรุณาเข้าสู่ระบบแทน')
       }
 
+      const teacherRecord = await findTeacherByNationalId(id)
+      if (!teacherRecord) {
+        throw new Error('ไม่พบข้อมูลอาจารย์ตามเลขบัตรประชาชนนี้ในระบบ กรุณาติดต่อผู้ดูแลระบบ')
+      }
+
       const passwordHash = await hashPassword(password)
       await setDoc(ref, {
         nationalId: id,
-        fullName: fullName.trim(),
+        fullName: teacherRecord.fullName,
+        depId: teacherRecord.depId,
+        depName: teacherRecord.depName,
         passwordHash,
         createdAt: serverTimestamp(),
       })
 
-      const profile = { nationalId: id, fullName: fullName.trim() }
+      const profile = { nationalId: id, fullName: teacherRecord.fullName }
       setTeacherProfile(profile)
       return profile
     } finally {
       setLoading(false)
     }
+  }
+
+  /** Preview a teacher's name from out-of/teachers before they submit registration. */
+  async function lookupTeacher(nationalId) {
+    if (!NATIONAL_ID_RE.test(nationalId.trim())) return null
+    return findTeacherByNationalId(nationalId.trim())
   }
 
   async function login({ nationalId, password }) {
@@ -103,6 +114,7 @@ export function AuthProvider({ children }) {
     register,
     login,
     logout,
+    lookupTeacher,
   }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

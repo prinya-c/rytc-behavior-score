@@ -16,4 +16,10 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
-export const db = getFirestore(app)
+
+// The `rytc-app` project has two separate named Firestore databases:
+//  - "out-of"         — existing school data (department/std_class/students/
+//                        teachers). Read-only from this app, always.
+//  - "behavior-score"  — this app's own data (teacher-accounts, student-scores).
+export const outOfDb = getFirestore(app, 'out-of')
+export const db = getFirestore(app, 'behavior-score')

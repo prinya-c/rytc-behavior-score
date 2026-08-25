@@ -1,22 +1,18 @@
-import { collectionGroup, getDocs } from 'firebase/firestore'
-import { db } from './firebase'
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { outOfDb } from './firebase'
 
-// `out-of` is a single document with subcollections: department, std_class,
-// students, teachers (confirmed from the live Firestore console — not a
-// flat collection of per-class documents as first assumed). We don't know
-// that document's ID, so we read via collectionGroup() instead, which finds
-// a subcollection by name regardless of its parent path. All reads here are
-// unfiltered (no where/orderBy) so no collection-group index is required.
+// `out-of` is a separate named Firestore database (not a collection) holding
+// the school's existing data as root collections: department, std_class,
+// students, teachers. This app only ever reads from it — never writes.
 
-let cache = null // { departments, stdClasses, students } — page-session only
+let listCache = null // { departments, stdClasses } — small, rarely-changing, session-cached
 
-async function loadAll() {
-  if (cache) return cache
+async function loadLists() {
+  if (listCache) return listCache
 
-  const [deptSnap, classSnap, studentSnap] = await Promise.all([
-    getDocs(collectionGroup(db, 'department')),
-    getDocs(collectionGroup(db, 'std_class')),
-    getDocs(collectionGroup(db, 'students')),
+  const [deptSnap, classSnap] = await Promise.all([
+    getDocs(collection(outOfDb, 'department')),
+    getDocs(collection(outOfDb, 'std_class')),
   ])
 
   const departments = deptSnap.docs.map((d) => {
@@ -37,39 +33,53 @@ async function loadAll() {
     }
   })
 
-  const students = studentSnap.docs.map((d) => {
-    const data = d.data()
-    return {
-      key: data.sid ?? d.id,
-      id: data.sid ?? d.id,
-      fullName: data.sname ?? '',
-      sidcard: data.sidcard ?? '',
-      classCode: data.class_code,
-    }
-  })
-
-  cache = { departments, stdClasses, students }
-  return cache
+  listCache = { departments, stdClasses }
+  return listCache
 }
 
 export async function listDepartments() {
-  return (await loadAll()).departments
+  return (await loadLists()).departments
 }
 
 export async function listStdClasses() {
-  return (await loadAll()).stdClasses
+  return (await loadLists()).stdClasses
 }
 
 /** Full detail for one std_class doc (by its Firestore document id), with its student roster. */
 export async function getClassDetail(classId) {
-  const { stdClasses, students } = await loadAll()
+  const { stdClasses } = await loadLists()
   const klass = stdClasses.find((c) => c.id === classId)
   if (!klass) return null
 
-  const roster = students
-    .filter((s) => String(s.classCode) === String(klass.classCode))
+  const snap = await getDocs(
+    query(collection(outOfDb, 'students'), where('class_code', '==', klass.classCode)),
+  )
+  const students = snap.docs
+    .map((d) => {
+      const data = d.data()
+      return {
+        key: data.sid ?? d.id,
+        id: data.sid ?? d.id,
+        fullName: data.sname ?? '',
+        sidcard: data.sidcard ?? '',
+      }
+    })
     .sort((a, b) => String(a.id).localeCompare(String(b.id)))
     .map((s, i) => ({ ...s, no: i + 1 }))
 
-  return { ...klass, students: roster }
+  return { ...klass, students }
+}
+
+/** Looks up a teacher's official record by national ID (out-of/teachers doc id = tidcard). */
+export async function findTeacherByNationalId(nationalId) {
+  const snap = await getDoc(doc(outOfDb, 'teachers', nationalId))
+  if (!snap.exists()) return null
+  const data = snap.data()
+  return {
+    tidcard: data.tidcard ?? snap.id,
+    fullName: data.tname ?? '',
+    depId: data.dep_id ?? '',
+    depName: data.dep_name ?? '',
+    position: data.position ?? '',
+  }
 }

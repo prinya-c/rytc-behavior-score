@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getClassDetail } from '../lib/outOf'
 import { loadScores, saveScores } from '../lib/behaviorScore'
 import { CRITERIA, computeJitphisai } from '../lib/criteria'
@@ -124,6 +124,12 @@ export default function ScoreEntry() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Link
+            to="/"
+            className="no-print rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
+          >
+            กลับหน้าหลัก
+          </Link>
           <button
             onClick={() => navigate(`/report/${classId}?${params.toString()}`)}
             className="no-print rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"

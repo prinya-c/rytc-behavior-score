@@ -207,6 +207,12 @@ export default function Report() {
         </div>
         <div className="flex gap-2 no-print">
           <Link
+            to="/"
+            className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
+          >
+            กลับหน้าหลัก
+          </Link>
+          <Link
             to={`/score/${classId}?${params.toString()}`}
             className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
           >

@@ -116,7 +116,7 @@ export default function Dashboard() {
               >
                 {classesInDepartment.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.shortName || c.className}
+                    {c.classCode} - {c.shortName || c.className}
                   </option>
                 ))}
               </select>

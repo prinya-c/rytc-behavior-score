@@ -12,24 +12,24 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false)
 
   const [lookupState, setLookupState] = useState('idle') // idle | loading | found | not-found
-  const [teacherName, setTeacherName] = useState('')
+  const [teacher, setTeacher] = useState(null)
 
   useEffect(() => {
     if (!/^\d{13}$/.test(nationalId)) {
       setLookupState('idle')
-      setTeacherName('')
+      setTeacher(null)
       return
     }
 
     let cancelled = false
     setLookupState('loading')
-    lookupTeacher(nationalId).then((teacher) => {
+    lookupTeacher(nationalId).then((result) => {
       if (cancelled) return
-      if (teacher) {
-        setTeacherName(teacher.fullName)
+      if (result) {
+        setTeacher(result)
         setLookupState('found')
       } else {
-        setTeacherName('')
+        setTeacher(null)
         setLookupState('not-found')
       }
     })
@@ -88,8 +88,18 @@ export default function Register() {
             {lookupState === 'loading' && (
               <p className="text-xs text-slate-400 mt-1">กำลังค้นหาข้อมูล...</p>
             )}
-            {lookupState === 'found' && (
-              <p className="text-sm text-emerald-700 mt-1">ชื่อ-สกุล: {teacherName}</p>
+            {lookupState === 'found' && teacher && (
+              <div className="mt-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 space-y-0.5">
+                <p className="text-sm text-emerald-800">
+                  <span className="text-emerald-600">ชื่อ-สกุล:</span> {teacher.fullName}
+                </p>
+                <p className="text-sm text-emerald-800">
+                  <span className="text-emerald-600">ตำแหน่ง:</span> {teacher.position || '-'}
+                </p>
+                <p className="text-sm text-emerald-800">
+                  <span className="text-emerald-600">สาขาวิชา:</span> {teacher.depName || '-'}
+                </p>
+              </div>
             )}
             {lookupState === 'not-found' && (
               <p className="text-sm text-red-600 mt-1">

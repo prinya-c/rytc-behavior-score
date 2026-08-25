@@ -226,7 +226,7 @@ export default function Report() {
       <div className="print:hidden overflow-x-auto border border-slate-200 rounded-2xl bg-white">
         <table className="min-w-max border-collapse text-sm">
           <thead>
-            <tr className="bg-slate-50">
+            <tr className="bg-primary/10">
               <th className="border-b border-r border-slate-200 px-3 py-2 w-10">ที่</th>
               <th className="border-b border-r border-slate-200 px-3 py-2 text-left min-w-[180px]">
                 ชื่อ-สกุล
@@ -264,11 +264,23 @@ export default function Report() {
                       {scores[c.key] ?? '-'}
                     </td>
                   ))}
-                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-medium">
-                    {record?.totalScore ?? '-'}
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center">
+                    {record ? (
+                      <span className="font-medium text-primary bg-primary/10 rounded-full px-2 py-0.5">
+                        {record.totalScore}
+                      </span>
+                    ) : (
+                      '-'
+                    )}
                   </td>
-                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-secondary">
-                    {record?.jitphisai ?? '-'}
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center">
+                    {record ? (
+                      <span className="font-semibold text-secondary bg-secondary/10 rounded-full px-2 py-0.5">
+                        {record.jitphisai}
+                      </span>
+                    ) : (
+                      '-'
+                    )}
                   </td>
                 </tr>
               )

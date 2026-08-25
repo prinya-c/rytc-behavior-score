@@ -70,6 +70,13 @@ export default function ScoreEntry() {
     })
   }
 
+  function scoreSelectClass(value) {
+    if (value === 2) return 'bg-success/10 border-success/40 text-success'
+    if (value === 1) return 'bg-warning/10 border-warning/40 text-warning'
+    if (value === 0) return 'bg-danger/10 border-danger/40 text-danger'
+    return 'bg-white border-slate-200'
+  }
+
   function setScore(studentKey, criteriaKey, rawValue) {
     setScoresByStudentKey((prev) => {
       const studentScores = { ...(prev[studentKey] ?? {}) }
@@ -157,11 +164,11 @@ export default function ScoreEntry() {
       <div className="overflow-x-auto border border-slate-200 rounded-2xl bg-white">
         <table className="min-w-max border-collapse text-sm">
           <thead>
-            <tr className="bg-slate-50">
-              <th className="sticky left-0 bg-slate-50 border-b border-r border-slate-200 px-3 py-2 text-left w-10">
+            <tr className="bg-primary/10">
+              <th className="sticky left-0 bg-primary/10 border-b border-r border-slate-200 px-3 py-2 text-left w-10">
                 ที่
               </th>
-              <th className="sticky left-10 bg-slate-50 border-b border-r border-slate-200 px-3 py-2 text-left min-w-[180px]">
+              <th className="sticky left-10 bg-primary/10 border-b border-r border-slate-200 px-3 py-2 text-left min-w-[180px]">
                 ชื่อ-สกุล
               </th>
               {activeCriteria.map((c) => (
@@ -210,25 +217,35 @@ export default function ScoreEntry() {
                   <td className="sticky left-10 bg-inherit border-b border-r border-slate-200 px-3 py-1.5 whitespace-nowrap">
                     {student.fullName}
                   </td>
-                  {activeCriteria.map((c) => (
-                    <td key={c.key} className="border-b border-r border-slate-200 px-1 py-1 text-center">
-                      <select
-                        value={studentScores[c.key] ?? ''}
-                        onChange={(e) => setScore(student.key, c.key, e.target.value)}
-                        className="w-14 rounded border border-slate-200 py-1 text-center bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+                  {activeCriteria.map((c) => {
+                    const value = studentScores[c.key] ?? ''
+                    return (
+                      <td
+                        key={c.key}
+                        className="border-b border-r border-slate-200 px-1 py-1 text-center"
                       >
-                        <option value="">-</option>
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                      </select>
-                    </td>
-                  ))}
-                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-medium">
-                    {totalScore}
+                        <select
+                          value={value}
+                          onChange={(e) => setScore(student.key, c.key, e.target.value)}
+                          className={`w-14 rounded border py-1 text-center font-medium focus:outline-none focus:ring-2 focus:ring-primary ${scoreSelectClass(value)}`}
+                        >
+                          <option value="">-</option>
+                          <option value="0">0</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                        </select>
+                      </td>
+                    )
+                  })}
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center">
+                    <span className="font-medium text-primary bg-primary/10 rounded-full px-2 py-0.5">
+                      {totalScore}
+                    </span>
                   </td>
-                  <td className="border-b border-slate-200 px-2 py-1.5 text-center font-semibold text-secondary">
-                    {jitphisai}
+                  <td className="border-b border-slate-200 px-2 py-1.5 text-center">
+                    <span className="font-semibold text-secondary bg-secondary/10 rounded-full px-2 py-0.5">
+                      {jitphisai}
+                    </span>
                   </td>
                 </tr>
               )

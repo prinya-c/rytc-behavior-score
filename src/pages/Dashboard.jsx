@@ -309,10 +309,12 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {sessions.map((session) => (
+          {sessions.map((session, index) => (
             <div
               key={session.key}
-              className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col gap-2"
+              className={`bg-white rounded-2xl border border-slate-200 border-l-4 ${
+                index % 2 === 0 ? 'border-l-primary' : 'border-l-secondary'
+              } p-4 flex flex-col gap-2`}
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="font-medium text-slate-800">
@@ -379,7 +381,7 @@ export default function Dashboard() {
                 <span>
                   ภาคเรียนที่ {session.term} ปีการศึกษา {session.academicYear}
                 </span>
-                <span className="font-medium text-slate-700">
+                <span className="font-medium text-secondary bg-secondary/10 rounded-full px-2 py-0.5">
                   {session.evaluatedCount}/{session.studentCount}
                 </span>
               </div>

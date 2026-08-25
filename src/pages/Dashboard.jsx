@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listDepartments, listStdClasses } from '../lib/outOf'
 import { deleteSession, listMySessions } from '../lib/behaviorScore'
+import { CRITERIA } from '../lib/criteria'
 import { useAuth } from '../context/AuthContext'
+
+const ALL_CRITERIA_KEYS = CRITERIA.map((c) => c.key)
 
 const currentBuddhistYear = new Date().getFullYear() + 543
 
@@ -23,6 +26,13 @@ export default function Dashboard() {
   const [courseName, setCourseName] = useState('')
   const [term, setTerm] = useState('1')
   const [academicYear, setAcademicYear] = useState(String(currentBuddhistYear))
+  const [selectedCriteria, setSelectedCriteria] = useState(ALL_CRITERIA_KEYS)
+
+  function toggleCriterion(key) {
+    setSelectedCriteria((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+    )
+  }
 
   function reloadSessions() {
     return listMySessions(teacherProfile.nationalId).then(setSessions)
@@ -59,13 +69,14 @@ export default function Dashboard() {
       courseName: courseName.trim(),
       term,
       academicYear,
+      criteria: selectedCriteria.join(','),
       ...overrides,
     }).toString()
   }
 
   function goToScoreEntry(e) {
     e.preventDefault()
-    if (!classId) return
+    if (!classId || selectedCriteria.length === 0) return
     navigate(`/score/${classId}?${buildParams()}`)
   }
 
@@ -75,6 +86,9 @@ export default function Dashboard() {
       courseName: session.courseName ?? '',
       term: session.term ?? '',
       academicYear: session.academicYear ?? '',
+      criteria: (session.selectedCriteria?.length ? session.selectedCriteria : ALL_CRITERIA_KEYS).join(
+        ',',
+      ),
       ...overrides,
     }).toString()
   }
@@ -257,10 +271,30 @@ export default function Dashboard() {
                 </p>
               )}
 
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  รายการประเมิน ({selectedCriteria.length}/{CRITERIA.length})
+                </label>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 max-h-48 overflow-y-auto rounded-lg border border-slate-200 p-3">
+                  {CRITERIA.map((c) => (
+                    <label key={c.key} className="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={selectedCriteria.includes(c.key)}
+                        onChange={() => toggleCriterion(c.key)}
+                        className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+                      />
+                      {c.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={goToScoreEntry}
-                  className="rounded-lg bg-sky-600 text-white px-4 py-2.5 font-medium hover:bg-sky-700"
+                  disabled={selectedCriteria.length === 0}
+                  className="rounded-lg bg-sky-600 text-white px-4 py-2.5 font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   กรอกคะแนนจิตพิสัย
                 </button>

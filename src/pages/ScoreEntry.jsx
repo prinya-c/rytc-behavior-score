@@ -15,6 +15,12 @@ export default function ScoreEntry() {
   const courseName = params.get('courseName') ?? ''
   const term = params.get('term') ?? ''
   const academicYear = params.get('academicYear') ?? ''
+  const criteriaParam = params.get('criteria')
+  const activeCriteria = useMemo(
+    () =>
+      criteriaParam ? CRITERIA.filter((c) => criteriaParam.split(',').includes(c.key)) : CRITERIA,
+    [criteriaParam],
+  )
 
   const [klass, setKlass] = useState(null)
   const [existing, setExisting] = useState(new Map())
@@ -34,13 +40,18 @@ export default function ScoreEntry() {
         setExisting(existingMap)
         const initial = {}
         for (const student of classData.students) {
-          initial[student.key] = existingMap.get(student.key)?.scores ?? {}
+          const savedScores = existingMap.get(student.key)?.scores ?? {}
+          const filtered = {}
+          for (const c of activeCriteria) {
+            if (savedScores[c.key] !== undefined) filtered[c.key] = savedScores[c.key]
+          }
+          initial[student.key] = filtered
         }
         setScoresByStudentKey(initial)
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [classId, academicYear, term])
+  }, [classId, academicYear, term, activeCriteria])
 
   function fillColumn(criteriaKey, rawValue) {
     if (!klass) return
@@ -96,6 +107,7 @@ export default function ScoreEntry() {
         scoresByStudentKey,
         existing,
         evaluator: teacherProfile,
+        selectedCriteria: activeCriteria.map((c) => c.key),
       })
       navigate('/')
     } catch (err) {
@@ -152,7 +164,7 @@ export default function ScoreEntry() {
               <th className="sticky left-10 bg-slate-50 border-b border-r border-slate-200 px-3 py-2 text-left min-w-[180px]">
                 ชื่อ-สกุล
               </th>
-              {CRITERIA.map((c) => (
+              {activeCriteria.map((c) => (
                 <th
                   key={c.key}
                   title={c.label}
@@ -198,7 +210,7 @@ export default function ScoreEntry() {
                   <td className="sticky left-10 bg-inherit border-b border-r border-slate-200 px-3 py-1.5 whitespace-nowrap">
                     {student.fullName}
                   </td>
-                  {CRITERIA.map((c) => (
+                  {activeCriteria.map((c) => (
                     <td key={c.key} className="border-b border-r border-slate-200 px-1 py-1 text-center">
                       <select
                         value={studentScores[c.key] ?? ''}

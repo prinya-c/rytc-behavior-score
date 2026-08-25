@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { APP_VERSION } from '../lib/version'
 
 export default function Login() {
   const { login } = useAuth()
@@ -29,7 +30,7 @@ export default function Login() {
     <div className="min-h-screen flex">
       <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary to-secondary flex-col items-center justify-center p-10 text-white text-center">
         <h2 className="text-3xl font-bold">วิทยาลัยเทคนิคระยอง</h2>
-        <p className="mt-3 text-white/90 max-w-sm">
+        <p className="mt-3 text-white/90 whitespace-nowrap">
           ระบบประเมินคุณลักษณะอันพึงประสงค์ (จิตพิสัย) สำหรับอาจารย์
         </p>
       </div>
@@ -87,6 +88,7 @@ export default function Login() {
               ลงทะเบียน
             </Link>
           </p>
+          <p className="text-xs text-slate-400 text-center mt-4">v{APP_VERSION}</p>
         </div>
       </div>
     </div>

@@ -54,6 +54,7 @@ export async function saveScores({
   existing,
   evaluator,
   selectedCriteria,
+  headName,
 }) {
   const batch = writeBatch(db)
 
@@ -79,6 +80,7 @@ export async function saveScores({
         studentName: student.fullName,
         scores,
         selectedCriteria,
+        headName,
         totalScore,
         evaluatedCount,
         jitphisai,
@@ -125,6 +127,7 @@ export async function listMySessions(evaluatorNationalId) {
         term: data.term,
         academicYear: data.academicYear,
         selectedCriteria: data.selectedCriteria,
+        headName: data.headName,
         studentCount: 1,
         evaluatedCount: evaluated,
         updatedAtMs,

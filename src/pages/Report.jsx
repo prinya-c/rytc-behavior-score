@@ -3,10 +3,11 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { getClassDetail } from '../lib/outOf'
 import { loadScores } from '../lib/behaviorScore'
 import { CRITERIA, MAX_SCORE_PER_ITEM } from '../lib/criteria'
+import { useAuth } from '../context/AuthContext'
 
 function RotatedHeader({ children }) {
   return (
-    <div className="h-[150px] flex items-end justify-center pb-1">
+    <div className="h-[110px] flex items-end justify-center pb-1">
       <span className="rotated-header text-[9px] leading-none">{children}</span>
     </div>
   )
@@ -15,7 +16,7 @@ function RotatedHeader({ children }) {
 /** จิตพิสัย column header: rendered as a fraction (numerator/denominator), each line rotated. */
 function RotatedFractionHeader({ numerator, denominator }) {
   return (
-    <div className="h-[150px] flex items-end justify-center gap-1 pb-1">
+    <div className="h-[110px] flex items-end justify-center gap-1 pb-1">
       <span className="rotated-header text-[9px] leading-none">{numerator}</span>
       <span className="rotated-header text-[9px] leading-none">{denominator}</span>
     </div>
@@ -24,7 +25,17 @@ function RotatedFractionHeader({ numerator, denominator }) {
 
 const ROWS_PER_PAGE = 30
 
-function PrintPage({ rows, existing, courseCode, courseName, term, academicYear, klass }) {
+function PrintPage({
+  rows,
+  existing,
+  courseCode,
+  courseName,
+  term,
+  academicYear,
+  klass,
+  evaluatorName,
+  headName,
+}) {
   return (
     <div className="print-page">
       <div className="text-center mb-2">
@@ -137,10 +148,12 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
         <div className="flex gap-16 mt-4">
           <div className="text-center">
             <p>ลงชื่อ.....................................................</p>
+            <p className="mt-1">({evaluatorName || '.....................................'})</p>
             <p className="mt-1">อาจารย์ประจำวิชา</p>
           </div>
           <div className="text-center">
             <p>ลงชื่อ.....................................................</p>
+            <p className="mt-1">({headName || '.....................................'})</p>
             <p className="mt-1">หัวหน้าแผนกวิชา</p>
           </div>
         </div>
@@ -157,6 +170,7 @@ function PrintPage({ rows, existing, courseCode, courseName, term, academicYear,
 export default function Report() {
   const { classId } = useParams()
   const [params] = useSearchParams()
+  const { teacherProfile } = useAuth()
 
   const courseCode = params.get('courseCode') ?? ''
   const courseName = params.get('courseName') ?? ''
@@ -192,6 +206,8 @@ export default function Report() {
   if (loading) return <div className="max-w-6xl mx-auto px-4 py-10 text-slate-500">กำลังโหลด...</div>
   if (error) return <div className="max-w-6xl mx-auto px-4 py-10 text-danger">{error}</div>
   if (!klass) return null
+
+  const headName = existing.values().next().value?.headName ?? ''
 
   const pageCount = Math.max(1, Math.ceil(klass.students.length / ROWS_PER_PAGE))
   const printPages = Array.from({ length: pageCount }, (_, pageIndex) => {
@@ -306,6 +322,8 @@ export default function Report() {
             term={term}
             academicYear={academicYear}
             klass={klass}
+            evaluatorName={teacherProfile.fullName}
+            headName={headName}
           />
         ))}
       </div>

@@ -66,7 +66,7 @@ export default function Register() {
     <div className="min-h-screen flex">
       <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary to-secondary flex-col items-center justify-center p-10 text-white text-center">
         <h2 className="text-3xl font-bold">วิทยาลัยเทคนิคระยอง</h2>
-        <p className="mt-3 text-white/90 max-w-sm">
+        <p className="mt-3 text-white/90 whitespace-nowrap">
           ระบบประเมินคุณลักษณะอันพึงประสงค์ (จิตพิสัย) สำหรับอาจารย์
         </p>
       </div>

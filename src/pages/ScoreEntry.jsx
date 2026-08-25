@@ -25,6 +25,7 @@ export default function ScoreEntry() {
   const [klass, setKlass] = useState(null)
   const [existing, setExisting] = useState(new Map())
   const [scoresByStudentKey, setScoresByStudentKey] = useState({})
+  const [headName, setHeadName] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -38,6 +39,8 @@ export default function ScoreEntry() {
         }
         setKlass(classData)
         setExisting(existingMap)
+        const firstRecord = existingMap.values().next().value
+        setHeadName(firstRecord?.headName ?? '')
         const initial = {}
         for (const student of classData.students) {
           const savedScores = existingMap.get(student.key)?.scores ?? {}
@@ -115,6 +118,7 @@ export default function ScoreEntry() {
         existing,
         evaluator: teacherProfile,
         selectedCriteria: activeCriteria.map((c) => c.key),
+        headName: headName.trim(),
       })
       navigate('/')
     } catch (err) {
@@ -138,6 +142,18 @@ export default function ScoreEntry() {
             {courseCode} {courseName} · ภาคเรียนที่ {term}/{academicYear} · {klass.depName}{' '}
             {klass.className}
           </p>
+          <div className="mt-2">
+            <label className="block text-xs font-medium text-slate-500 mb-1">
+              ชื่อ-สกุลหัวหน้าแผนกวิชา
+            </label>
+            <input
+              type="text"
+              value={headName}
+              onChange={(e) => setHeadName(e.target.value)}
+              placeholder="เช่น นายสมชาย ใจดี"
+              className="no-print w-64 rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
         </div>
         <div className="flex gap-2">
           <Link

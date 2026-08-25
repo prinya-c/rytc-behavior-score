@@ -219,18 +219,6 @@ export default function Report() {
           >
             กลับหน้าหลัก
           </Link>
-          <Link
-            to={`/score/${classId}?${params.toString()}`}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
-          >
-            แก้ไขคะแนน
-          </Link>
-          <button
-            onClick={() => window.print()}
-            className="rounded-lg bg-slate-800 text-white px-4 py-2 font-medium hover:bg-slate-900"
-          >
-            พิมพ์ / บันทึก PDF
-          </button>
         </div>
       </div>
 

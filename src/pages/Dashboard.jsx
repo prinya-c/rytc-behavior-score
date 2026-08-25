@@ -170,9 +170,6 @@ export default function Dashboard() {
               ยกเลิก
             </button>
           </div>
-          <p className="text-sm text-slate-500 -mt-3">
-            ข้อมูลกลุ่มเรียนและรายชื่อนักเรียนดึงมาจาก collection <code>out-of</code> (อ่านอย่างเดียว)
-          </p>
 
           {stdClasses.length === 0 ? (
             <p className="text-slate-500">ยังไม่มีข้อมูลกลุ่มเรียนใน out-of</p>

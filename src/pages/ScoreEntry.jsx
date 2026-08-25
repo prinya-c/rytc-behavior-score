@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getClassDetail } from '../lib/outOf'
 import { loadScores, saveScores } from '../lib/behaviorScore'
-import { CRITERIA, computeJitphisai } from '../lib/criteria'
+import { CRITERIA, MAX_SCORE_PER_ITEM, computeJitphisai } from '../lib/criteria'
 import { useAuth } from '../context/AuthContext'
 
 export default function ScoreEntry() {
@@ -42,6 +42,24 @@ export default function ScoreEntry() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [classId, academicYear, term])
+
+  function fillAllMax() {
+    if (!klass) return
+    const hasExistingScores = Object.values(scoresByStudentKey).some(
+      (studentScores) => Object.keys(studentScores).length > 0,
+    )
+    if (hasExistingScores && !window.confirm('เติมคะแนนเต็ม (2) ให้ทุกคนทุกช่อง แล้วเขียนทับคะแนนที่กรอกไว้แล้วหรือไม่?')) {
+      return
+    }
+
+    const filled = {}
+    for (const student of klass.students) {
+      const studentScores = {}
+      for (const c of CRITERIA) studentScores[c.key] = MAX_SCORE_PER_ITEM
+      filled[student.key] = studentScores
+    }
+    setScoresByStudentKey(filled)
+  }
 
   function setScore(studentKey, criteriaKey, rawValue) {
     setScoresByStudentKey((prev) => {
@@ -107,6 +125,12 @@ export default function ScoreEntry() {
           </p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={fillAllMax}
+            className="no-print rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
+          >
+            เติมคะแนนเต็มทั้งตาราง
+          </button>
           <button
             onClick={() => navigate(`/report/${classId}?${params.toString()}`)}
             className="no-print rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
